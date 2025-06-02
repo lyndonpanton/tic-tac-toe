@@ -32,3 +32,26 @@ body, html, h1, h2, h3, h4, h5, h6 {
 input, select, button {
     appearance: none;
 }
+
+/* Header */
+
+/* Main */
+#board {
+
+}
+
+.board-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.board-cell {
+    width: 200px;
+    height: 200px;
+    border: 1px solid black;
+    border-collapse: collapse;
+
+    font-size: 10rem;
+    text-align: center;
+}
