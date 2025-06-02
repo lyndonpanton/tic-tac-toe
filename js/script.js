@@ -1,28 +1,36 @@
 let userInterface = (function UI() {
-    let updateBoard = function (board) {
+    let createBoard = function (board) {
         let container = document.getElementById("board");
-
-        while (container.firstChild) {
-            container.removeChild(container.firstChild);
-        }
 
         for (let i = 0; i < board.length; i++) {
             let row = document.createElement("div");
             row.classList.add("board-row");
 
-            for (let j = 0; j < board[i].length; j++) {
+            for (let j = 0; j < board.length; j++) {
                 let cell = document.createElement("div");
                 cell.classList.add("board-cell");
-                cell.textContent = board[i][j];
 
                 row.appendChild(cell);
             }
 
             container.appendChild(row);
         }
+    };
+
+    let updateBoard = function (board) {
+        let container = document.getElementById("board");
+
+        for (let i = 0; i < board.length; i++) {
+            let row = container.children[i];
+
+            for (let j = 0; j < board[i].length; j++) {
+                let cell = row.children[j];
+                cell.textContent = board[i][j];
+            }
+        }
     }
 
-    return { updateBoard };
+    return { createBoard, updateBoard };
 })();
 
 let gameBoard = (function GameBoard() {
@@ -78,6 +86,7 @@ document.addEventListener("DOMContentLoaded", function (e) {
         let playerOneTurn = true;
         let winner;
 
+        ui.createBoard(board.getBoard());
         ui.updateBoard(board.getBoard());
 
         let play = function(tileNumber) {
