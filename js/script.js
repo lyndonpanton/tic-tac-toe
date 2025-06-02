@@ -65,49 +65,47 @@ const pieces = Object.freeze({
     O: "O"
 });
 
-let game = (function Game() {
-    // Allow players to choose their piece
-    let playerOne = Player(pieces["X"]);
-    let playerTwo = Player(pieces["O"]);
-    let board = gameBoard;
-    let ui = userInterface;
 
-    let finished = false;
-    let playerOneTurn = true;
-    let winner;
+document.addEventListener("DOMContentLoaded", function (e) {    
+    let game = (function Game() {
+        // Allow players to choose their piece
+        let playerOne = Player(pieces["X"]);
+        let playerTwo = Player(pieces["O"]);
+        let board = gameBoard;
+        let ui = userInterface;
 
-    let play = function(tileNumber) {
-        let move;
+        let finished = false;
+        let playerOneTurn = true;
+        let winner;
 
-        if (playerOneTurn) {
-            move = playerOne.move(tileNumber);
-        } else {
-            move = playerTwo.move(tileNumber);
-        }
+        ui.updateBoard(board.getBoard());
 
-        console.log(move);
-        console.log(board.getBoard());
+        let play = function(tileNumber) {
+            let move;
 
-        switch (board.fill(move.piece, move.tileNumber)) {
-            case 0:
-                ui.updateBoard(board.getBoard());
-                playerOneTurn = !playerOneTurn;
-                break;
-            case 1:
-                console.log("Invalid move (cell is occupied)");
-                break;
-            case 2:
-                console.log(
-                    "Invalid move (tile number must be between 1 and 9)"
-                );
-                break;
+            if (playerOneTurn) {
+                move = playerOne.move(tileNumber);
+            } else {
+                move = playerTwo.move(tileNumber);
+            }
 
-        }
-    };
+            switch (board.fill(move.piece, move.tileNumber)) {
+                case 0:
+                    ui.updateBoard(board.getBoard());
+                    playerOneTurn = !playerOneTurn;
+                    break;
+                case 1:
+                    console.log("Invalid move (cell is occupied)");
+                    break;
+                case 2:
+                    console.log(
+                        "Invalid move (tile number must be between 1 and 9)"
+                    );
+                    break;
 
-    return { play };
-})();
+            }
+        };
 
-document.addEventListener("DOMContentLoaded", function (e) {
-    
+        return { play };
+    })();
 });
