@@ -2,7 +2,7 @@
 
 ## Description
 
-An application which allows two-players to play tic-tac-toe (also known as
+An application which allows two players to play tic-tac-toe (also known as
 noughts and crosses or x's and o's) together.
 
 ## Getting Started
