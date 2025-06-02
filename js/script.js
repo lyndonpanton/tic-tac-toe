@@ -1,10 +1,37 @@
+let userInterface = (function UI() {
+    let updateBoard = function (board) {
+        let container = document.getElementById("board");
+
+        while (container.firstChild) {
+            container.removeChild(container.firstChild);
+        }
+
+        for (let i = 0; i < board.length; i++) {
+            let row = document.createElement("div");
+            row.classList.add("board-row");
+
+            for (let j = 0; j < board[i].length; j++) {
+                let cell = document.createElement("div");
+                cell.classList.add("board-cell");
+                cell.textContent = board[i][j];
+
+                row.appendChild(cell);
+            }
+
+            container.appendChild(row);
+        }
+    }
+
+    return { updateBoard };
+})();
+
 let gameBoard = (function GameBoard() {
-    this.board = [
+    let board = [
         ["", "", ""],
         ["", "", ""],
         ["", "", ""]
     ];
-    this.fill = function(piece, tileNumber) {
+    let fill = function(piece, tileNumber) {
         let row = Math.ceil(tileNumber / this.board[0].length);
         let column = ((tileNumber + 2) % 3) + 1;
 
@@ -17,15 +44,11 @@ let gameBoard = (function GameBoard() {
             return 0
         }
     };
-    this.display = function() {
-        for (let i = 0; i < this.board; i++) {
-            for (let j = 0; j < this.board[i]; j++) {
-                console.log(this.board[i][j] + " ");
-            }
-        }
+    let getBoard = function() {
+        return board;
     }
 
-    return { board, fill, display };
+    return { board, fill, getBoard };
 })();
 
 function Player(playerPiece) {
@@ -47,6 +70,7 @@ let game = (function Game() {
     let playerOne = Player(pieces["X"]);
     let playerTwo = Player(pieces["O"]);
     let board = gameBoard;
+    let ui = userInterface;
 
     let finished = false;
     let playerOneTurn = true;
@@ -62,11 +86,11 @@ let game = (function Game() {
         }
 
         console.log(move);
-        console.log(board.board);
+        console.log(board.getBoard());
 
         switch (board.fill(move.piece, move.tileNumber)) {
             case 0:
-                board.display();
+                ui.updateBoard(board.getBoard());
                 playerOneTurn = !playerOneTurn;
                 break;
             case 1:
