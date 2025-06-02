@@ -8,7 +8,9 @@ A list of tasks I need to do to complete this project.
 
 ### MVP
 
-- [ ] Check if moves are valid
+- [x] Check if moves are valid
+    - [x] Tile is not already occupied
+    - [x] Tile number is in range
 - [ ] Check for end condition
 - [ ] Display game in window
 - [ ] Allow game to be restarted

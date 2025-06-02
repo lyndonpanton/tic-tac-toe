@@ -8,7 +8,14 @@ let gameBoard = (function GameBoard() {
         let row = Math.ceil(tileNumber / this.board[0].length);
         let column = ((tileNumber + 2) % 3) + 1;
 
-        this.board[row - 1][column - 1] = piece;
+        if (tileNumber < 1 || tileNumber > 9) {
+            return 2;
+        } else if (this.board[row - 1][column - 1] !== "") {
+            return 1;
+        } else {
+            this.board[row - 1][column - 1] = piece;
+            return 0
+        }
     };
     this.display = function() {
         for (let i = 0; i < this.board; i++) {
@@ -57,21 +64,26 @@ let game = (function Game() {
         console.log(move);
         console.log(board.board);
 
-        board.fill(move.piece, move.tileNumber);
-        board.display();
+        switch (board.fill(move.piece, move.tileNumber)) {
+            case 0:
+                board.display();
+                playerOneTurn = !playerOneTurn;
+                break;
+            case 1:
+                console.log("Invalid move (cell is occupied)");
+                break;
+            case 2:
+                console.log(
+                    "Invalid move (tile number must be between 1 and 9)"
+                );
+                break;
 
-        playerOneTurn = !playerOneTurn;
-
+        }
     };
 
     return { play };
 })();
 
 document.addEventListener("DOMContentLoaded", function (e) {
-    console.log("DOM content loaded");
+    
 });
-
-/*
-    - Create players
-    - Start game
-*/
