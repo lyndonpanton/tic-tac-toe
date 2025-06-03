@@ -1,5 +1,5 @@
-let userInterface = function UI(game) {
-    let createBoard = function (game, board) {
+let userInterface = (function UI() {
+    let createBoard = function (board) {
         let container = document.getElementById("board");
 
         for (let i = 0; i < board.length; i++) {
@@ -9,22 +9,6 @@ let userInterface = function UI(game) {
             for (let j = 0; j < board.length; j++) {
                 let cell = document.createElement("div");
                 cell.classList.add("board-cell");
-
-                cell.addEventListener("click", function () {
-                    // game.play();
-
-                    switch (i) {
-                        case 0:
-                            // game.play(1 + j);
-                            break;
-                        case 1:
-                            // game.play(4 + j);
-                            break;
-                        case 2:
-                            // game.play(7 + j);
-                            break;
-                    }
-                });
 
                 row.appendChild(cell);
             }
@@ -47,6 +31,42 @@ let userInterface = function UI(game) {
     }
 
     return { createBoard, updateBoard };
+})();
+
+function DOM(game, board, container) {
+    let gameController = game;
+    let gameBoard = board;
+    let displayBoard = container;
+
+    console.log(gameBoard);
+    console.log(displayBoard);
+    console.log(gameController);
+
+    let addCellEvents = function () {
+        for (let i = 0; i < displayBoard.children.length; i++) {
+            let displayRow = displayBoard.getElementsByClassName("board-row");
+
+            for (let j = 0; j < displayRow[i].children.length; j++) {
+                let cell = displayRow[i].getElementsByClassName("board-cell")[j];
+
+                cell.addEventListener("click", function () {
+                    switch (i) {
+                        case 0:
+                            gameController.play(j + 1);
+                            break;
+                        case 1:
+                            gameController.play(3 + j + 1);
+                            break;
+                        case 2:
+                            gameController.play(6 + j + 1);
+                            break;
+                    }
+                });
+            }
+        }
+    }
+
+    return { addCellEvents };
 };
 
 let gameBoard = (function GameBoard() {
@@ -56,15 +76,15 @@ let gameBoard = (function GameBoard() {
         ["", "", ""]
     ];
     let fill = function(piece, tileNumber) {
-        let row = Math.ceil(tileNumber / this.board[0].length);
+        let row = Math.ceil(tileNumber / this.getBoard()[0].length);
         let column = ((tileNumber + 2) % 3) + 1;
 
         if (tileNumber < 1 || tileNumber > 9) {
             return 2;
-        } else if (this.board[row - 1][column - 1] !== "") {
+        } else if (this.getBoard()[row - 1][column - 1] !== "") {
             return 1;
         } else {
-            this.board[row - 1][column - 1] = piece;
+            this.getBoard()[row - 1][column - 1] = piece;
             return 0
         }
     };
@@ -72,7 +92,8 @@ let gameBoard = (function GameBoard() {
         return board;
     };
 
-    return { board, fill, getBoard };
+    // return { board, fill, getBoard };
+    return { fill, getBoard };
 })();
 
 function Player(playerPiece) {
@@ -89,14 +110,15 @@ const pieces = Object.freeze({
     O: "O"
 });
 
+let game;
 
 document.addEventListener("DOMContentLoaded", function (e) {    
-    let game = (function Game() {
+    game = (function Game() {
         // Allow players to choose their piece
         let playerOne = Player(pieces["X"]);
         let playerTwo = Player(pieces["O"]);
         let board = gameBoard;
-        let ui = userInterface(game);
+        let ui = userInterface;
 
         let finished = false;
         let playerOneTurn = true;
@@ -131,6 +153,10 @@ document.addEventListener("DOMContentLoaded", function (e) {
             }
         };
 
-        return { play };
+        return { play, board };
     })();
+
+    let container = document.getElementById("board");
+    let dom = DOM(game, game.board.getBoard(), container);
+    dom.addCellEvents();
 });
