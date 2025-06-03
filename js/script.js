@@ -34,17 +34,18 @@ let userInterface = (function UI() {
 })();
 
 function DOM(game, board, container) {
-    let gameController = game;
-    let gameBoard = board;
-    let displayBoard = container;
+    this.gameController = game;
+    this.gameBoard = board;
+    this.displayBoard = container;
 
-    console.log(gameBoard);
-    console.log(displayBoard);
-    console.log(gameController);
+    console.log(this.gameController);
+    console.log(this.gameBoard);
+    console.log(this.displayBoard);
 
-    let addCellEvents = function () {
-        for (let i = 0; i < displayBoard.children.length; i++) {
-            let displayRow = displayBoard.getElementsByClassName("board-row");
+    this.addCellEvents = function (game, gameController) {
+        console.log("ok");
+        for (let i = 0; i < this.displayBoard.children.length; i++) {
+            let displayRow = this.displayBoard.getElementsByClassName("board-row");
 
             for (let j = 0; j < displayRow[i].children.length; j++) {
                 let cell = displayRow[i].getElementsByClassName("board-cell")[j];
@@ -52,21 +53,53 @@ function DOM(game, board, container) {
                 cell.addEventListener("click", function () {
                     switch (i) {
                         case 0:
-                            gameController.play(j + 1);
+                            gameController.play(
+                                j + 1,
+                                game.playerOne,
+                                game.playerTwo,
+                                game.ui
+                            );
                             break;
                         case 1:
-                            gameController.play(3 + j + 1);
+                            gameController.play(
+                                3 + j + 1,
+                                game.playerOne,
+                                game.playerTwo,
+                                game.ui
+                            );
                             break;
                         case 2:
-                            gameController.play(6 + j + 1);
+                            gameController.play(
+                                6 + j + 1,
+                                game.playerOne,
+                                game.playerTwo,
+                                game.ui
+                            );
                             break;
                     }
                 });
             }
         }
-    }
+    };
+    this.displayWinner = function(isDraw, isPlayerOne) {
+        if (isDraw) {
 
-    return { addCellEvents };
+        } else {
+            if (isPlayerOne) {
+
+            } else {
+
+            }
+        }
+    };
+
+    return {
+        gameController: this.gameController,
+        gameBoard: this.gameBoard,
+        displayBoard: this.displayBoard,
+        addCellEvents: this.addCellEvents,
+        displayWinner: this.displayWinner
+    };
 };
 
 let gameBoard = (function GameBoard() {
@@ -110,53 +143,135 @@ const pieces = Object.freeze({
     O: "O"
 });
 
-let game;
+// let game;
 
 document.addEventListener("DOMContentLoaded", function (e) {    
-    game = (function Game() {
+    function Game() {
         // Allow players to choose their piece
-        let playerOne = Player(pieces["X"]);
-        let playerTwo = Player(pieces["O"]);
-        let board = gameBoard;
-        let ui = userInterface;
+        this.playerOne = Player(pieces["X"]);
+        this.playerTwo = Player(pieces["O"]);
+        this.board = gameBoard;
+        this.ui = userInterface;
+        // let container = document.getElementById("board");
+        // this.dom = new DOM(this, board.getBoard(), container);
+        // this.dom.addCellEvents();
 
-        let finished = false;
-        let playerOneTurn = true;
-        let winner;
+        this.finished = false;
+        this.playerOneTurn = true;
 
-        ui.createBoard(board.getBoard());
-        ui.updateBoard(board.getBoard());
+        this.ui.createBoard(this.board.getBoard());
+        this.ui.updateBoard(this.board.getBoard());
 
-        let play = function(tileNumber) {
-            let move;
+        this.play = function(tileNumber, playerOne, playerTwo, ui) {
+            if (this.isWinner() === 0) {
+                let move;
 
-            if (playerOneTurn) {
-                move = playerOne.move(tileNumber);
-            } else {
-                move = playerTwo.move(tileNumber);
-            }
+                if (this.playerOneTurn) {
+                    move = playerOne.move(tileNumber);
+                } else {
+                    move = playerTwo.move(tileNumber);
+                }
 
-            switch (board.fill(move.piece, move.tileNumber)) {
-                case 0:
-                    ui.updateBoard(board.getBoard());
-                    playerOneTurn = !playerOneTurn;
-                    break;
-                case 1:
-                    console.log("Invalid move (cell is occupied)");
-                    break;
-                case 2:
-                    console.log(
-                        "Invalid move (tile number must be between 1 and 9)"
-                    );
-                    break;
+                switch (this.board.fill(move.piece, move.tileNumber)) {
+                    case 0:
+                        ui.updateBoard(this.board.getBoard());
+                        break;
+                    case 1:
+                        console.log("Invalid move (cell is occupied)");
+                        break;
+                    case 2:
+                        console.log(
+                            "Invalid move (tile number must be between 1 and 9)"
+                        );
+                        break;
 
+                }
+
+                let result = this.isWinner();
+
+                switch (result) {
+                    case 0:
+                        this.playerOneTurn = !this.playerOneTurn;
+                        break;
+                    case 1:
+                        break;
+                    case 2:
+                        break;
+                }
             }
         };
+        this.isWinner = function() {
+            let winnerFound =
+                    // via top row
+                    this.board.getBoard()[0][0] !== "" 
+                        && this.board.getBoard()[0][0] === this.board.getBoard()[0][1]
+                        && this.board.getBoard()[0][1] === this.board.getBoard()[0][2]
+                    // via middle row
+                    || this.board.getBoard()[1][0] !== "" 
+                        && this.board.getBoard()[1][0] === this.board.getBoard()[1][1]
+                        && this.board.getBoard()[1][1] === this.board.getBoard()[1][2]
+                    // via bottom row
+                    || this.board.getBoard()[2][0] !== "" 
+                        && this.board.getBoard()[2][0] === this.board.getBoard()[2][1]
+                        && this.board.getBoard()[2][1] === this.board.getBoard()[2][2]
+                    // via left column
+                    || this.board.getBoard()[0][0] !== "" 
+                        && this.board.getBoard()[0][0] === this.board.getBoard()[1][0]
+                        && this.board.getBoard()[1][0] === this.board.getBoard()[2][0]
+                    // via center column
+                    || this.board.getBoard()[0][1] !== "" 
+                        && this.board.getBoard()[0][1] === this.board.getBoard()[1][1]
+                        && this.board.getBoard()[1][1] === this.board.getBoard()[2][1]
+                    // via right column
+                    || this.board.getBoard()[0][2] !== "" 
+                        && this.board.getBoard()[0][2] === this.board.getBoard()[1][2]
+                        && this.board.getBoard()[1][2] === this.board.getBoard()[2][2]
+                    // via top left to bottom right diagonal
+                    || this.board.getBoard()[0][0] !== "" 
+                        && this.board.getBoard()[0][0] === this.board.getBoard()[1][1]
+                        && this.board.getBoard()[1][1] === this.board.getBoard()[2][2]
+                    // via top right to bottom left diagonal
+                    || this.board.getBoard()[0][2] !== "" 
+                        && this.board.getBoard()[0][2] === this.board.getBoard()[1][1]
+                        && this.board.getBoard()[1][1] === this.board.getBoard()[2][0];
 
-        return { play, board };
-    })();
+            let boardFull = true;
 
+            for (let i = 0; i < this.board.getBoard().length; i++) {
+                for (let j = 0; j < this.board.getBoard()[i].length; j++) {
+                    if (this.board.getBoard()[i][j] === "") {
+                        boardFull = false;
+                        break;
+                    }
+                }
+            }
+
+            // 0 -> continue, 1 -> winner, 2 -> board full
+            if (!winnerFound && boardFull) {
+                return 2;
+            } else if (winnerFound) {
+                return 1;
+            } else {
+                return 0;
+            }
+        }
+
+        return {
+            play: this.play,
+            board: this.board,
+            isWinner: this.isWinner,
+            playerOne: this.playerOne,
+            playerTwo: this.playerTwo,
+            ui: this.ui
+        };
+    };
+    let game = new Game();
     let container = document.getElementById("board");
-    let dom = DOM(game, game.board.getBoard(), container);
-    dom.addCellEvents();
+
+    console.log(game.playerOne);
+    console.log(game.playerTwo);
+    
+    // let dom = DOM(game, game.board.getBoard(), container);
+    game.dom = new DOM(game, game.board.getBoard(), container);
+    game.dom.addCellEvents(game, game.dom.gameController);
 });
