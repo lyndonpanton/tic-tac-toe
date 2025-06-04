@@ -35,7 +35,7 @@ const Game = function(gameBoard, playerOne, playerTwo) {
         }
     };
 
-    return { play };
+    return { play, gameBoard };
 };
 
 const GameBoard = function() {
@@ -148,7 +148,42 @@ const Player = function(isPlayerOne, gameBoard) {
     return { move };
 };
 
-let gameBoard = GameBoard();
-let playerOne = Player(true, gameBoard);
-let playerTwo = Player(false, gameBoard);
-let game = Game(gameBoard, playerOne, playerTwo);
+const Display = function(game) {
+    let createBoard = function() {
+        let board = document.getElementById("board");
+        
+        while (board.firstChild) {
+            board.removeChild(board.firstChild);
+        }
+
+        for (let i = 0; i < 3; i++) {
+            let boardRow = document.createElement("row");
+            boardRow.classList.add("board-row");
+
+            for (let j = 0; j < 3; j++) {
+                let boardCell = document.createElement("cell");
+                boardCell.classList.add("board-cell");
+
+                boardCell.addEventListener("click", function() {
+                    game.play(i + 1, j + 1);
+                });
+
+                boardRow.appendChild(boardCell);
+            }
+
+            board.appendChild(boardRow);
+        }
+    };
+
+    return { createBoard };
+};
+
+document.addEventListener("DOMContentLoaded", function() {
+    let gameBoard = GameBoard();
+    let playerOne = Player(true, gameBoard);
+    let playerTwo = Player(false, gameBoard);
+    let game = Game(gameBoard, playerOne, playerTwo);
+    let display = Display(game);
+    display.createBoard();
+});
+
