@@ -43,9 +43,14 @@ const Game = function(gameBoard, playerOne, playerTwo) {
     };
     const getIsPlayerOneTurn = function() {
         return isPlayerOneTurn;
+    };
+    const reset = function () {
+        isPlayerOneTurn = true;
+        gameStatus = 0;
+        gameBoard.reset();
     }
 
-    return { play, gameBoard, getIsPlayerOneTurn };
+    return { play, gameBoard, getIsPlayerOneTurn, reset };
 };
 
 const GameCondition = function(isFull, winner) {
@@ -145,9 +150,16 @@ const GameBoard = function() {
         }
 
         return 0;
-    }
+    };
+    const reset = function() {
+        board = [
+            [" ", " ", " "],
+            [" ", " ", " "],
+            [" ", " ", " "]
+        ];
+    };
 
-    return { updateBoard, displayBoard, checkForEnd };
+    return { updateBoard, displayBoard, checkForEnd, reset };
 };
 
 const Player = function(isPlayerOne, gameBoard) {
@@ -169,9 +181,8 @@ const Player = function(isPlayerOne, gameBoard) {
 };
 
 const Display = function(game) {
+    let board = document.getElementById("board");
     let createBoard = function() {
-        let board = document.getElementById("board");
-        
         while (board.firstChild) {
             board.removeChild(board.firstChild);
         }
@@ -202,8 +213,15 @@ const Display = function(game) {
             board.appendChild(boardRow);
         }
     };
+    let reset = function() {
+        for (let i = 0; i < board.children.length; i++) {
+            for (let j = 0; j < board.children[i].children.length; j++) {
+                board.children[i].children[j].textContent = "";
+            }
+        }
+    };
 
-    return { createBoard };
+    return { createBoard, reset };
 };
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -213,4 +231,10 @@ document.addEventListener("DOMContentLoaded", function() {
     let game = Game(gameBoard, playerOne, playerTwo);
     let display = Display(game);
     display.createBoard();
+
+    let restartButton = document.getElementById("button-restart");
+    restartButton.addEventListener("click", function() {
+        game.reset();
+        display.reset();
+    });
 });
