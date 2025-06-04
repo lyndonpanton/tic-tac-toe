@@ -17,7 +17,7 @@ const Game = function(gameBoard, playerOne, playerTwo) {
             }
 
             gameStatus = board.checkForEnd();
-            
+
             isPlayerOneTurn =
                     successful ? !isPlayerOneTurn : isPlayerOneTurn;
 
@@ -29,11 +29,11 @@ const Game = function(gameBoard, playerOne, playerTwo) {
                     return GameCondition(true, Winner.NONE);
                 case 2:
                     console.log(
-                        "Player " + (isPlayerOneTurn ? "1" : "2") + " wins!"
+                        "Player " + (isPlayerOneTurn ? "2" : "1") + " wins!"
                     );
                     return GameCondition(
                         true,
-                        isPlayerOneTurn ? Winner.X : Winner.O
+                        isPlayerOneTurn ? Winner.O : Winner.X
                     );
             }
         }
