@@ -11,8 +11,8 @@ A list of tasks I need to do to complete this project.
 - [x] Check if moves are valid
     - [x] Tile is not already occupied
     - [x] Tile number is in range
-- [ ] Check for end condition
-- [ ] Display game in window
+- [x] Check for end condition
+- [x] Display game in window
 - [ ] Allow game to be restarted
 - [ ] Allow users to enter their names
 - [ ] Display the score on screen

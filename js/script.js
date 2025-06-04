@@ -17,26 +17,46 @@ const Game = function(gameBoard, playerOne, playerTwo) {
             }
 
             gameStatus = board.checkForEnd();
+            
+            isPlayerOneTurn =
+                    successful ? !isPlayerOneTurn : isPlayerOneTurn;
 
             switch (gameStatus) {
                 case 0:
-                    isPlayerOneTurn =
-                            successful ? !isPlayerOneTurn : isPlayerOneTurn;
-                    break;
+                    return GameCondition(false, Winner.NONE);
                 case 1:
-                    console.log("Board is full! Draw!")
-                    break;
+                    console.log("Board is full! Draw!");
+                    return GameCondition(true, Winner.NONE);
                 case 2:
                     console.log(
                         "Player " + (isPlayerOneTurn ? "1" : "2") + " wins!"
                     );
-                    break;
+                    return GameCondition(
+                        true,
+                        isPlayerOneTurn ? Winner.X : Winner.O
+                    );
             }
         }
-    };
 
-    return { play, gameBoard };
+        // return GameCondition(true, isPlayerOneTurn ? Winner.X : Winner.O);
+        return null;
+    };
+    const getIsPlayerOneTurn = function() {
+        return isPlayerOneTurn;
+    }
+
+    return { play, gameBoard, getIsPlayerOneTurn };
 };
+
+const GameCondition = function(isFull, winner) {
+    return { isFull, winner };
+};
+
+const Winner = Object.freeze({
+    X: "X",
+    O: "O",
+    NONE: ""
+});
 
 const GameBoard = function() {
     let board = [
@@ -164,8 +184,16 @@ const Display = function(game) {
                 let boardCell = document.createElement("cell");
                 boardCell.classList.add("board-cell");
 
-                boardCell.addEventListener("click", function() {
-                    game.play(i + 1, j + 1);
+                boardCell.addEventListener("click", function(e) {
+                    let gameCondition = game.play(i + 1, j + 1);
+                    console.log(gameCondition);
+                    if (gameCondition === null) return;
+
+                    if (!game.getIsPlayerOneTurn()) {
+                        e.target.textContent = "X";
+                    } else {
+                        e.target.textContent = "O";
+                    }
                 });
 
                 boardRow.appendChild(boardCell);
@@ -186,4 +214,3 @@ document.addEventListener("DOMContentLoaded", function() {
     let display = Display(game);
     display.createBoard();
 });
-
