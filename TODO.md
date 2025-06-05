@@ -19,6 +19,15 @@ A list of tasks I need to do to complete this project.
 - [x] If there if a winner, highlight the winning cells
 - [x] Display the overall score on screen
 - [x] Allows users to reset overall score
+- [x] Design the user interface
+- [ ] Style the user interface
+    - [x] Header
+    - [ ] Name form
+    - [x] Tally
+    - [x] Board
+    - [x] Game result
+    - [x] Reset button
+    - [x] _Reset record_ and _restart_ buttons should be horizontally aligned
 
 ### Additional
 

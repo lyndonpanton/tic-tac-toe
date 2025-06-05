@@ -144,7 +144,6 @@ const GameBoard = function() {
             [" ", " ", " "],
             [" ", " ", " "]
         ];
-        document.getElementById("result").textContent = "";
     };
 
     return { updateBoard, checkForEnd, reset };
@@ -172,6 +171,7 @@ const Display = function(game) {
     let playerOneRecord = document.getElementsByClassName("record-score")[0];
     let playerTwoRecord = document.getElementsByClassName("record-score")[1];
     let drawRecord = document.getElementsByClassName("record-score")[2];
+    let result = document.getElementById("result");
 
     let createBoard = function() {
         while (board.firstChild) {
@@ -214,6 +214,9 @@ const Display = function(game) {
         }
     };
     let reset = function() {
+        result.textContent = "...";
+        result.classList.remove("result-displayed");
+        
         for (let i = 0; i < board.children.length; i++) {
             for (let j = 0; j < board.children[i].children.length; j++) {
                 let cell = board.children[i].children[j];
@@ -230,7 +233,7 @@ const Display = function(game) {
             board.children[cells[i][0]].children[cells[i][1]].classList.add("winning-cell");
         }
     };
-    let setPlayerNames = function(e, record, board, result, restartButton) {
+    let setPlayerNames = function(e, record, board, result, buttons) {
         e.preventDefault();
 
         playerOneName = e.target.children[0].value;
@@ -249,7 +252,7 @@ const Display = function(game) {
         record.classList.remove("hidden");
         board.classList.remove("hidden");
         result.classList.remove("hidden");
-        restartButton.classList.remove("hidden");
+        buttons.classList.remove("hidden");
     };
     let updateRecord = function(winner) {
         switch (winner) {
@@ -263,7 +266,12 @@ const Display = function(game) {
                 drawRecord.textContent = parseInt(drawRecord.textContent) + 1;
                 break;
         }
+
+        displayResultText();
     };
+    let displayResultText = function() {
+        result.classList.add("result-displayed");
+    }
 
     return { createBoard, reset, setPlayerNames, updateRecord };
 };
@@ -288,13 +296,14 @@ document.addEventListener("DOMContentLoaded", function() {
     let board = document.getElementById("board");
     let record = document.getElementById("record");
     let result = document.getElementById("result");
+    let buttons = document.getElementById("buttons");
 
     let nameForm = document.getElementById("names");
     nameForm.addEventListener("submit", function (e) {
-        display.setPlayerNames(e, record, board, result, restartButton);
+        display.setPlayerNames(e, record, board, result, buttons);
     });
 
-    let recordReset = document.getElementById("record-reset");
+    let recordReset = document.getElementById("button-reset");
     recordReset.addEventListener("click", function () {
         let records = document.getElementsByClassName("record-score");
 
