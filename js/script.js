@@ -227,7 +227,7 @@ const Display = function(game) {
     return { createBoard, reset };
 };
 
-function setPlayerNames(e, board) {
+function setPlayerNames(e, board, result, restartButton) {
     e.preventDefault();
 
     playerOneName = e.target.children[0].value;
@@ -242,18 +242,16 @@ function setPlayerNames(e, board) {
     }
 
     e.target.classList.add("hidden");
+    
     board.classList.remove("hidden");
+    result.classList.remove("hidden");
+    restartButton.classList.remove("hidden");
 }
 
 let playerOneName;
 let playerTwoName;
 
 document.addEventListener("DOMContentLoaded", function() {
-    let board = document.getElementById("board");
-    let nameForm = document.getElementById("names");
-    nameForm.addEventListener("submit", function (e) {
-        setPlayerNames(e, board);
-    });
 
     let gameBoard = GameBoard();
     let playerOne = Player(true, gameBoard);
@@ -266,5 +264,13 @@ document.addEventListener("DOMContentLoaded", function() {
     restartButton.addEventListener("click", function() {
         game.reset();
         display.reset();
+    });
+
+    let board = document.getElementById("board");
+    let result = document.getElementById("result");
+
+    let nameForm = document.getElementById("names");
+    nameForm.addEventListener("submit", function (e) {
+        setPlayerNames(e, board, result, restartButton);
     });
 });

@@ -34,22 +34,36 @@ input, select, button {
 }
 
 /* Header */
+header {
+    padding: 40px 0;
+}
+
+h1 {
+    font-size: 4rem;
+    text-align: center;
+}
 
 /* Main */
 #board, #names {
-    margin: 80px auto 0;
+    margin: 40px auto 0;
     /* border: 2px solid sandybrown; */
-    width: 600px;
-    height: 600px;
+    width: 450px;
+    height: 450px;
 }
 
 .hidden {
-    display: none;
+    display: none !important;
 }
 
 /* Names */
+#names {
+    width: 100%;
+}
+
 #names > input[type="text"] {
-    margin-bottom: 40px;
+    display: block;
+
+    margin: 0 auto 40px;
     width: 600px;
     height: 60px;
     padding: 8px 10px;
@@ -86,12 +100,12 @@ input, select, button {
 }
 
 .board-cell {
-    width: 200px;
-    height: 200px;
+    width: 150px;
+    height: 150px;
     /* border: 1px solid transparent; */
     border-collapse: collapse;
 
-    font-size: 10rem;
+    font-size: 9rem;
     text-align: center;
 }
 
