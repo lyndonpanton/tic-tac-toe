@@ -36,13 +36,38 @@ input, select, button {
 /* Header */
 
 /* Main */
-#board {
-    margin: 0 auto;
+#board, #names {
+    margin: 80px auto 0;
     /* border: 2px solid sandybrown; */
     width: 600px;
     height: 600px;
 }
 
+.hidden {
+    display: none;
+}
+
+/* Names */
+#names > input[type="text"] {
+    margin-bottom: 40px;
+    width: 600px;
+    height: 60px;
+    padding: 8px 10px;
+
+    font-size: 2rem;
+}
+
+#names > button[type="submit"] {
+    display: block;
+
+    margin: 0 auto;
+    width: 400px;
+    height: 60px;
+
+    font-size: 1.8rem;
+}
+
+/* Board */
 .board-row {
     display: flex;
     flex-direction: row;

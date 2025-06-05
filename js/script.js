@@ -29,7 +29,7 @@ const Game = function(gameBoard, playerOne, playerTwo) {
                     return GameCondition(true, Winner.NONE);
                 case 2:
                     console.log(
-                        "Player " + (isPlayerOneTurn ? "2" : "1") + " wins!"
+                        (isPlayerOneTurn ? playerTwoName : playerOneName) + " wins!"
                     );
                     return GameCondition(
                         true,
@@ -224,7 +224,37 @@ const Display = function(game) {
     return { createBoard, reset };
 };
 
+function setPlayerNames(e, board) {
+    e.preventDefault();
+
+    playerOneName = e.target.children[0].value;
+    playerTwoName = e.target.children[1].value;
+
+    if (playerOneName.trim() === "") {
+        playerOneName = "Player 1";
+    }
+
+    if (playerTwoName.trim() === "") {
+        playerTwoName = "Player 2";
+    }
+
+    console.log(playerOneName);
+    console.log(playerTwoName);
+
+    e.target.classList.add("hidden");
+    board.classList.remove("hidden");
+}
+
+let playerOneName;
+let playerTwoName;
+
 document.addEventListener("DOMContentLoaded", function() {
+    let board = document.getElementById("board");
+    let nameForm = document.getElementById("names");
+    nameForm.addEventListener("submit", function (e) {
+        setPlayerNames(e, board);
+    });
+
     let gameBoard = GameBoard();
     let playerOne = Player(true, gameBoard);
     let playerTwo = Player(false, gameBoard);
