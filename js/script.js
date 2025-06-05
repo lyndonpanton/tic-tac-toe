@@ -21,16 +21,18 @@ const Game = function(gameBoard, playerOne, playerTwo) {
             isPlayerOneTurn =
                     successful ? !isPlayerOneTurn : isPlayerOneTurn;
 
+            let result = document.getElementById("result");
+
             switch (gameStatus) {
                 case 0:
                     return GameCondition(false, Winner.NONE);
                 case 1:
-                    console.log("Board is full! Draw!");
+                    result.textContent = "Board is full! Draw!";
                     return GameCondition(true, Winner.NONE);
                 case 2:
-                    console.log(
-                        (isPlayerOneTurn ? playerTwoName : playerOneName) + " wins!"
-                    );
+                    result.textContent = 
+                        (isPlayerOneTurn ? playerTwoName : playerOneName)
+                        + " wins!";
                     return GameCondition(
                         true,
                         isPlayerOneTurn ? Winner.O : Winner.X
@@ -157,6 +159,8 @@ const GameBoard = function() {
             [" ", " ", " "],
             [" ", " ", " "]
         ];
+        document.getElementById("result").textContent = "";
+
     };
 
     return { updateBoard, displayBoard, checkForEnd, reset };
