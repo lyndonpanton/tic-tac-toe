@@ -69,6 +69,11 @@ h1 {
     padding: 8px 10px;
 
     font-size: 2rem;
+    text-align: center;
+}
+
+#names > input[type="text"]::placeholder {
+    text-align: center;
 }
 
 #names > button[type="submit"] {
@@ -105,7 +110,7 @@ h1 {
     /* border: 1px solid transparent; */
     border-collapse: collapse;
 
-    font-size: 9rem;
+    font-size: 8rem;
     text-align: center;
 }
 
