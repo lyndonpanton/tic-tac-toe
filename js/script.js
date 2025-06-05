@@ -169,6 +169,10 @@ const Player = function(isPlayerOne, gameBoard) {
 
 const Display = function(game) {
     let board = document.getElementById("board");
+    let playerOneRecord = document.getElementsByClassName("record-score")[0];
+    let playerTwoRecord = document.getElementsByClassName("record-score")[1];
+    let drawRecord = document.getElementsByClassName("record-score")[2];
+
     let createBoard = function() {
         while (board.firstChild) {
             board.removeChild(board.firstChild);
@@ -197,6 +201,10 @@ const Display = function(game) {
                     if (gameCondition.winner !== Winner.NONE) {
                         highlightWinningCells(gameCondition.cells);
                     }
+                    
+                    if (gameCondition.isFull) {
+                        updateRecord(gameCondition.winner);
+                    }
                 });
 
                 boardRow.appendChild(boardCell);
@@ -218,41 +226,52 @@ const Display = function(game) {
         }
     };
     let highlightWinningCells = function(cells) {
-        // [[0, 0], [0, 1], [0, 2]]
         for (let i = 0; i < cells.length; i++) {
             board.children[cells[i][0]].children[cells[i][1]].classList.add("winning-cell");
         }
     };
+    let setPlayerNames = function(e, record, board, result, restartButton) {
+        e.preventDefault();
 
-    return { createBoard, reset };
+        playerOneName = e.target.children[0].value;
+        playerTwoName = e.target.children[1].value;
+
+        if (playerOneName.trim() === "") {
+            playerOneName = "Player 1";
+        }
+
+        if (playerTwoName.trim() === "") {
+            playerTwoName = "Player 2";
+        }
+
+        e.target.classList.add("hidden");
+
+        record.classList.remove("hidden");
+        board.classList.remove("hidden");
+        result.classList.remove("hidden");
+        restartButton.classList.remove("hidden");
+    };
+    let updateRecord = function(winner) {
+        switch (winner) {
+            case Winner.X:
+                playerOneRecord.textContent = parseInt(playerOneRecord.textContent) + 1;
+                break;
+            case Winner.O:
+                playerTwoRecord.textContent = parseInt(playerTwoRecord.textContent) + 1;
+                break;
+            case Winner.NONE:
+                drawRecord.textContent = parseInt(drawRecord.textContent) + 1;
+                break;
+        }
+    };
+
+    return { createBoard, reset, setPlayerNames, updateRecord };
 };
-
-function setPlayerNames(e, board, result, restartButton) {
-    e.preventDefault();
-
-    playerOneName = e.target.children[0].value;
-    playerTwoName = e.target.children[1].value;
-
-    if (playerOneName.trim() === "") {
-        playerOneName = "Player 1";
-    }
-
-    if (playerTwoName.trim() === "") {
-        playerTwoName = "Player 2";
-    }
-
-    e.target.classList.add("hidden");
-    
-    board.classList.remove("hidden");
-    result.classList.remove("hidden");
-    restartButton.classList.remove("hidden");
-}
 
 let playerOneName;
 let playerTwoName;
 
 document.addEventListener("DOMContentLoaded", function() {
-
     let gameBoard = GameBoard();
     let playerOne = Player(true, gameBoard);
     let playerTwo = Player(false, gameBoard);
@@ -267,10 +286,11 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
     let board = document.getElementById("board");
+    let record = document.getElementById("record");
     let result = document.getElementById("result");
 
     let nameForm = document.getElementById("names");
     nameForm.addEventListener("submit", function (e) {
-        setPlayerNames(e, board, result, restartButton);
+        display.setPlayerNames(e, record, board, result, restartButton);
     });
 });
