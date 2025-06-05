@@ -31,4 +31,6 @@ A list of tasks I need to do to complete this project.
 
 ### Additional
 
-- [ ] Add tests for each operation (game methods, gameboard methods, etc.)
+- [ ] Tests for each operation (game methods, gameboard methods, etc.)
+- [ ] Hover animations on board cells
+- [ ] vs. AI mode
