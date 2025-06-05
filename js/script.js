@@ -293,4 +293,13 @@ document.addEventListener("DOMContentLoaded", function() {
     nameForm.addEventListener("submit", function (e) {
         display.setPlayerNames(e, record, board, result, restartButton);
     });
+
+    let recordReset = document.getElementById("record-reset");
+    recordReset.addEventListener("click", function () {
+        let records = document.getElementsByClassName("record-score");
+
+        for (let i = 0; i < records.length; i++) {
+            records[i].textContent = 0;
+        }
+    });
 });
