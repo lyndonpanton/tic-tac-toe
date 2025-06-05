@@ -17,9 +17,9 @@
     <main>
         <!-- Ask for names before starting -->
         <form id="names">
-            <input type="text" name="player-one" id="player-one" placeholder="Player One name">
-            <input type="text" name="player-two" id="player-two" placeholder="Player Two name">
-            <button type="submit">Start</button>
+            <input type="text" name="player-one" id="player-one" placeholder="Player One">
+            <input type="text" name="player-two" id="player-two" placeholder="Player Two">
+            <button type="submit" id="button-start">Start</button>
         </form>
         <div id="record" class="hidden">
             <span class="record-score">0</span>
@@ -34,7 +34,7 @@
             
         </div>
         <div id="buttons" class="hidden">
-            <button id="button-restart">Restart game</button>
+            <button type="button" id="button-restart">Restart game</button>
             <button type="button" id="button-reset">Reset record</button>
         </div>
     </main>
