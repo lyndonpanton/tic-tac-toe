@@ -103,6 +103,10 @@ input, select, button {
     border-left: 1px solid black;
 }
 
+.winning-cell {
+    background-color: greenyellow;
+}
+
 /*  */
 #button-restart {
     display: block;

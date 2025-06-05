@@ -4,10 +4,10 @@ const Game = function(gameBoard, playerOne, playerTwo) {
     let p2 = playerTwo;
     let isPlayerOneTurn = true;
     // 0 -> player, 1 -> board full, 2 -> winner found
-    let gameStatus = 0;
+    let gameStatus = { status: 0, winningCells: null };
 
     const play = function(rowPosition, columnPosition) {
-        if (gameStatus === 0) {
+        if (gameStatus.status === 0) {
             let successful;
 
             if (isPlayerOneTurn) {
@@ -23,24 +23,25 @@ const Game = function(gameBoard, playerOne, playerTwo) {
 
             let result = document.getElementById("result");
 
-            switch (gameStatus) {
+            switch (gameStatus.status) {
                 case 0:
-                    return GameCondition(false, Winner.NONE);
+                    return GameCondition(false, Winner.NONE, null);
                 case 1:
                     result.textContent = "Board is full! Draw!";
-                    return GameCondition(true, Winner.NONE);
+                    return GameCondition(true, Winner.NONE, null);
                 case 2:
                     result.textContent = 
                         (isPlayerOneTurn ? playerTwoName : playerOneName)
                         + " wins!";
+                    console.log(GameCondition(true, isPlayerOneTurn ? Winner.O : Winner.X, gameStatus.winningCells));
                     return GameCondition(
                         true,
-                        isPlayerOneTurn ? Winner.O : Winner.X
+                        isPlayerOneTurn ? Winner.O : Winner.X,
+                        gameStatus.winningCells
                     );
             }
         }
 
-        // return GameCondition(true, isPlayerOneTurn ? Winner.X : Winner.O);
         return null;
     };
     const getIsPlayerOneTurn = function() {
@@ -48,15 +49,15 @@ const Game = function(gameBoard, playerOne, playerTwo) {
     };
     const reset = function () {
         isPlayerOneTurn = true;
-        gameStatus = 0;
+        gameStatus = { status: 0, winningCells: null };
         gameBoard.reset();
     }
 
     return { play, gameBoard, getIsPlayerOneTurn, reset };
 };
 
-const GameCondition = function(isFull, winner) {
-    return { isFull, winner };
+const GameCondition = function(isFull, winner, cells) {
+    return { isFull, winner, cells };
 };
 
 const Winner = Object.freeze({
@@ -73,41 +74,50 @@ const GameBoard = function() {
     ];
     const updateBoard = function(piece, rowPosition, columnPosition) {
         if (rowPosition < 1 || rowPosition > 3) {
-            console.log("Row position out of bounds (must be between 1 and 3)");
             return false;
         } else if (columnPosition < 1 || columnPosition > 3) {
-            console.log(
-                    "Column position out of bounds (must be between 1 and 3)"
-            );
             return false;
         } else if (board[rowPosition - 1][columnPosition - 1] !== " ") {
-            console.log(
-                    "Position ( " + rowPosition + ", " + columnPosition +
-                    " ) is already occupied"
-            );
             return false;
         }
         
         board[rowPosition - 1][columnPosition - 1] = piece;
         return true;
     };
-    const displayBoard = function() {
-        for (let i = 0; i < board.length; i++) {
-            let row = "";
-
-            for (let j = 0; j < board[i].length; j++) {
-                row += " " + board[i][j];
-
-                if (j != board[i].length - 1) row += " |"
-            }
-
-            console.log(row);
-            
-            if (i != board.length - 1) console.log("-----------");
-        }
-    };
     const checkForEnd = function() {
         // 0 -> n/a, 1 -> board is full, 2 -> winner found
+
+        for (let i = 0; i < board.length; i++) {
+            if (
+                board[i][0] !== " "
+                    && board[i][0] === board[i][1]
+                    && board[i][1] === board[i][2]
+            ) {
+                return { status: 2, winningCells: [ [i, 0], [i, 1], [i, 2] ] };
+            } else if (
+                board[0][i] !== " "
+                    && board[0][i] === board[1][i]
+                    && board[1][i] === board[2][i]
+            ) {
+                return { status: 2, winningCells: [ [0, i], [1, i], [2, i] ] };
+            }
+        }
+
+        if (
+            board[0][0] !== " "
+                && board[0][0] === board[1][1]
+                && board[1][1] === board[2][2]
+        ) {
+            return { status: 2, winningCells: [ [0, 0], [1, 1], [2, 2] ] }
+        }
+
+        if (
+            board[0][2] !== " "
+                && board[0][2] === board[1][1]
+                && board[1][1] === board[2][0]
+        ) {
+            return { status: 2, winningCells: [ [0, 2], [1, 1], [2, 0] ] }
+        }
 
         let isBoardFull = true;
 
@@ -118,40 +128,15 @@ const GameBoard = function() {
                     break;
                 }
             }
+
+            if (!isBoardFull) break;
         }
 
-        if (
-            board[0][0] !== " "
-                && board[0][0] == board[0][1]
-                && board[0][1] == board[0][2]
-            || board[1][0] !== " "
-                && board[1][0] == board[1][1]
-                && board[1][1] == board[1][2]
-            || board[2][0] !== " "
-                && board[2][0] == board[2][1]
-                && board[2][1] == board[2][2]
-            || board[0][0] !== " "
-                && board[0][0] == board[1][0]
-                && board[1][0] == board[2][0]
-            || board[0][1] !== " "
-                && board[0][1] == board[1][1]
-                && board[1][1] == board[2][1]
-            || board[0][2] !== " "
-                && board[0][2] == board[1][2]
-                && board[1][2] == board[2][2]
-            || board[0][0] !== " "
-                && board[0][0] == board[1][1]
-                && board[1][1] == board[2][2]
-            || board[0][2] !== " "
-                && board[0][2] == board[1][1]
-                && board[1][1] == board[2][0]
-        ) {
-            return 2;
-        } else if (isBoardFull) {
-            return 1;
+        if (isBoardFull) {
+            return { status: 1, winningCells: null };
         }
 
-        return 0;
+        return { status: 0, winningCells: null };
     };
     const reset = function() {
         board = [
@@ -160,10 +145,9 @@ const GameBoard = function() {
             [" ", " ", " "]
         ];
         document.getElementById("result").textContent = "";
-
     };
 
-    return { updateBoard, displayBoard, checkForEnd, reset };
+    return { updateBoard, checkForEnd, reset };
 };
 
 const Player = function(isPlayerOne, gameBoard) {
@@ -174,7 +158,6 @@ const Player = function(isPlayerOne, gameBoard) {
         let successful = board.updateBoard(piece, rowPosition, columnPosition)
 
         if (successful) {
-            board.displayBoard();
             return true;
         }
 
@@ -202,12 +185,17 @@ const Display = function(game) {
                 boardCell.addEventListener("click", function(e) {
                     let gameCondition = game.play(i + 1, j + 1);
                     console.log(gameCondition);
+                    
                     if (gameCondition === null) return;
 
                     if (!game.getIsPlayerOneTurn()) {
                         e.target.textContent = "X";
                     } else {
                         e.target.textContent = "O";
+                    }
+
+                    if (gameCondition.winner !== Winner.NONE) {
+                        highlightWinningCells(gameCondition.cells);
                     }
                 });
 
@@ -220,8 +208,19 @@ const Display = function(game) {
     let reset = function() {
         for (let i = 0; i < board.children.length; i++) {
             for (let j = 0; j < board.children[i].children.length; j++) {
-                board.children[i].children[j].textContent = "";
+                let cell = board.children[i].children[j];
+                cell.textContent = "";
+
+                if (cell.classList.contains("winning-cell")) {
+                    cell.classList.remove("winning-cell");
+                }
             }
+        }
+    };
+    let highlightWinningCells = function(cells) {
+        // [[0, 0], [0, 1], [0, 2]]
+        for (let i = 0; i < cells.length; i++) {
+            board.children[cells[i][0]].children[cells[i][1]].classList.add("winning-cell");
         }
     };
 
@@ -241,9 +240,6 @@ function setPlayerNames(e, board) {
     if (playerTwoName.trim() === "") {
         playerTwoName = "Player 2";
     }
-
-    console.log(playerOneName);
-    console.log(playerTwoName);
 
     e.target.classList.add("hidden");
     board.classList.remove("hidden");
